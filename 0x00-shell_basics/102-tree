@@ -1,2 +1,3 @@
 #!/bin/bash
 mkdir -p welcome/to/holberton
+mkdir -p main-0x00-shell_basics{welcome,welcome/to/,welcome/to/school}
