@@ -32,37 +32,21 @@ defaults
         errorfile 502 /etc/haproxy/errors/502.http
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
-
-listen load-balance
-        bind :80
-        bind :8080
-        mode http
-        balance roundrobin
-        option httpchk HEAD / HTTP/1.1\r\nHost:\ localhost
-        option forwardfor
-        server 16275-web-01 54.146.69.34:80 check
-        server 16275-web-02 54.159.23.136:80 check
-        #server 16275-web-01 54.236.26.66 check port 80
-        #server 16275-web-02 54.159.23.136 check port 80
-
 frontend www-http
-        bind *:80
-        reqadd X-Forwarded-Proto:\ http
-        default_backend www-backend
-
+    bind *:80
+    mode http
+    default_backend web-backend
 frontend www-https
-        bind *:443 ssl crt /etc/haproxy/certs/www.tracyalx.tech.pem
-        redirect scheme https if !{ ssl_fc }
-        reqadd X-Forwarded-Proto:\ https
-        stats uri /haproxy?stats
-        #acl letsencrypt-acl path_beg /.well-known/acme-challenge/
-        #use_backend letsencrypt-backend if letsencrypt-acl
-        default_backend www-backend
+    bind *:443 ssl crt /etc/haproxy/tracyalx.tech.pem
+    http-request set-header X-Forwarded-Proto https
+    acl letsencrypt-acl path_beg /.well-known/acme-challenge/
+    use_backend letsencrypt-backend if letsencrypt-acl
+    default_backend web-backend
 
-backend www-backend
-        #redirect scheme https if !{ ssl_fc }
-        balance roundrobin
-        server 155759-web-01 54.89.57.174:80 check
-        server 155759-web-02 100.26.10.124:80 check
-        #server 155759-web-01 54.89.57.174 port 80 check
-        #server 155759-web-02 100.26.10.124 port 80 check
+backend web-backend
+    redirect scheme https unless { ssl_fc }
+    balance roundrobin
+    server 155759-web-01 18.210.15.86:80 check
+    server 155759-web-02 52.87.222.78:80 check
+backend letsencrypt-backend
+   server letsencrypt 127.0.0.1:54321
