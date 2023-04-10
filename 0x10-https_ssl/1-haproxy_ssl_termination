@@ -51,7 +51,7 @@ frontend www-http
         default_backend www-backend
 
 frontend www-https
-        bind *:443 ssl crt /etc/haproxy/certs/www.joekaunda.tech.pem
+        bind *:443 ssl crt /etc/haproxy/certs/www.tracyalx.tech.pem
         redirect scheme https if !{ ssl_fc }
         reqadd X-Forwarded-Proto:\ https
         stats uri /haproxy?stats
@@ -62,7 +62,7 @@ frontend www-https
 backend www-backend
         #redirect scheme https if !{ ssl_fc }
         balance roundrobin
-        server 16275-web-01 54.146.69.34:80 check
-        server 16275-web-02 54.159.23.136:80 check
-        #server 16275-web-01 54.236.26.66 port 80 check
-        #server 16275-web-02 54.159.23.136 port 80 check
+        server 155759-web-01 54.89.57.174:80 check
+        server 155759-web-02 100.26.10.124:80 check
+        #server 155759-web-01 54.89.57.174 port 80 check
+        #server 155759-web-02 100.26.10.124 port 80 check
